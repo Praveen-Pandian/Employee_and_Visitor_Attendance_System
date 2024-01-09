@@ -8,6 +8,16 @@ if (!isset($_SESSION["emp_id"])) {
 // Database details
 include_once("../dbCOnnection.php");
 
+// Generate Calendar for a month
+include_once("generateCalendar.php");
+
+// Generate Holiday dates
+include_once("generateHolidayDates.php");
+
+// Functions
+include_once("./functions.php");
+
+
 class details
 {
     public $date;
@@ -17,15 +27,38 @@ class details
 
 //user_id
 $emp_id = $_SESSION["emp_id"];
+
+
+// Variables - begin
 $GLOBALS["check_in_open_camera"] = false;
 $GLOBALS["check_out_open_camera"] = false;
 $verification_error = "";
 
+$mon_arr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+$day_arr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+$month = isset($_REQUEST['month']) ? $_REQUEST['month'] : date("n");
+$year = isset($_REQUEST['year']) ? $_REQUEST['year'] : date("Y");
+
+// First date of this month
+$date = strtotime("$year-$month-1");
+
+// First day of the month
+$start_date = date("w", $date);
+
+// No of days in the month
+$end_date = date("t", $date);
+
+// Today date
+$today_date = date("d");
+
+// Variables - end
+
+
+
+// Check In and Check Out Verification
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["image"])) {
     $image = $_POST["image"];
-
-    include_once("./functions.php");
-
     if ($_POST["type"] == "check_in") {
         $GLOBALS['verification_error'] = checkIn($image);
         $GLOBALS["check_in_open_camera"] = true;
@@ -50,42 +83,27 @@ $month_of_joining = date("n", $dateOfJoining);
 $year_of_joining = date("Y", $dateOfJoining);
 $first_date = null;
 
+
 // Avg working hours
-$sql = "SELECT SEC_TO_TIME(AVG(TIME_TO_SEC(`check_out_time`) - TIME_TO_SEC(`check_in_time`))) as stats FROM `employee_attendance` GROUP BY emp_id HAVING emp_id = '$emp_id';";
+$sql = "SELECT SEC_TO_TIME(AVG(TIME_TO_SEC(`check_out_time`) - TIME_TO_SEC(`check_in_time`))) as stats FROM `employee_attendance` WHERE check_out_time != '00:00:00' GROUP BY emp_id HAVING emp_id = '$emp_id';";
 $result = mysqli_query($con, $sql);
 $row = mysqli_fetch_array($result);
 $avg_working_time = $row["stats"];
 $avg_working_time = (int)number_format(substr($avg_working_time, 0, 2)) + round(number_format(substr($avg_working_time, 3, 2)) / 60, 1);
 
 
-$mon_arr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-$day_arr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-$month = isset($_REQUEST['month']) ? $_REQUEST['month'] : date("n");
-$year = isset($_REQUEST['year']) ? $_REQUEST['year'] : date("Y");
-
-$date = strtotime("$year-$month-1");
-
+// If date of joining is not this month then go to date of joining month
 if (strtotime(date("$year_of_joining-$month_of_joining-1")) > strtotime(date("$year-$month-1"))) {
     header("Location: ./?month=$month_of_joining&year=$year_of_joining");
 }
 
+// If date of joining is this month then block before dates
 if (strtotime(date("$year_of_joining-$month_of_joining-1")) == strtotime(date("$year-$month-1"))) {
     $GLOBALS['first_month'] = true;
     $GLOBALS['first_date'] = date("j", $dateOfJoining);
 }
 
-
-// First day of the month
-$start_date = date("w", $date);
-// No of days in the month
-$end_date = date("t", $date);
-
-
-
-// Today date
-$today_date = date("d");
-
+// Get Employee Name from DB
 $sql = "SELECT emp_name FROM employee_details WHERE emp_id = '$emp_id'";
 $result = mysqli_query($con, $sql);
 $row = mysqli_fetch_array($result);
@@ -97,6 +115,8 @@ $system_date = Date("Y-m-d");
 $sql = "UPDATE employee_attendance SET check_out_time = '18:00' WHERE date < '$system_date' and check_out_time = '00:00:00'";
 mysqli_query($con, $sql);
 
+
+// Get the attendance from DB for this month
 $sql = "SELECT * FROM employee_attendance WHERE date >= '$year-$month-01' and date <= '$year-$month-31' and emp_id = '$emp_id'";
 $result = mysqli_query($con, $sql);
 
@@ -111,16 +131,14 @@ while ($row = mysqli_fetch_array($result)) {
     $data[(int) date("d", $user_det->date)] = $user_det;
 }
 
-include_once("generateCalendar.php");
-
-// Generate Holiday dates
-include_once("generateHolidayDates.php");
+// Get the holiday dates from DB
 $holiday = generateHolidayDates($year, $month);
 
 ?>
 <html lang="en">
 
 <head>
+    <link rel='icon' href='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLtc8BZ6ODkts0V0DHZ22rpI9pbM6Erydq3_bk7DWnsA&s' />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
@@ -159,7 +177,6 @@ $holiday = generateHolidayDates($year, $month);
     <div class="container1" style="<?php if ($check_in_open_camera || $check_out_open_camera) echo "opacity:0.5"; ?>">
         <div class="calendar">
             <div class="header">
-
 
                 <a href=<?php echo './?month=' . ($month - 1 < 1 ? 12 : $month - 1) . '&year=' . ($month == 1 ? $year - 1 : $year) ?> style="<?php if ($first_month) echo "pointer-events:none" ?>">
                     <span class='material-symbols-outlined'>

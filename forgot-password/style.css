@@ -141,3 +141,10 @@ form>*{
 .password,button{
     width: 80%;
 }
+
+.alert{
+    width: 80%;
+    height: 15%;
+    display: flex;
+    align-items: center;
+}

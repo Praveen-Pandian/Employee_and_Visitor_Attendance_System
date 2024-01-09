@@ -43,8 +43,8 @@ function sendMail($email)
         $mail->addAddress($email);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Subject';
-        $mail->Body = "HTML message body in <b>$otp</b> ";
+        $mail->Subject = 'OTP for Forgot password';
+        $mail->Body = "Your OTP for forgot password is : <b>$otp</b> ";
         $mail->AltBody = 'Body in plain text for non-HTML mail clients';
         $mail->send();
     } catch (Exception $e) {

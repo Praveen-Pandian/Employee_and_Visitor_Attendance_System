@@ -1,11 +1,12 @@
 <?php
 session_start();
 
-
+$emp_id = "";
+$user_password = "";
 $error_msg = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $emp_id = $_POST["emp_id"];
-    $user_password = $_POST["password"];
+    $GLOBALS['emp_id'] = $_POST["emp_id"];
+    $GLOBALS['user_password'] = $_POST["password"];
     $type = $_POST["type"];
 
     if (trim($emp_id) == "")
@@ -43,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel='icon' href='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLtc8BZ6ODkts0V0DHZ22rpI9pbM6Erydq3_bk7DWnsA&s' />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In</title>
@@ -67,9 +69,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ?>
             <h3>Login</h3>
             <label for="emp_id">Employee ID</label>
-            <input class="form-control w-100" name="emp_id" id="empid" placeholder="Employee ID"  autocomplete="off"/>
+            <input class="form-control w-100" name="emp_id" id="empid" placeholder="Employee ID"  autocomplete="off" value='<?php echo $emp_id ?>'/>
             <label for="emp_id">Password</label>
-            <input class="form-control w-100" type="password" name="password" id="password" placeholder="Password" />
+            <input class="form-control w-100" type="password" name="password" id="password" placeholder="Password" value='<?php echo $user_password ?>' />
             <section>
             <select class="form-select w-50" name="type">
                 <option value="employee">Employee</option>

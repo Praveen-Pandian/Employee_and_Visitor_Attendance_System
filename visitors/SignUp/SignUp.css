@@ -35,7 +35,7 @@ html {
     margin: 2%;
     font-size: xx-large;
 }
-
+ 
 .SignUp-Form-Img {
     width: 90%;
     border-radius: 5px;
@@ -57,7 +57,7 @@ html {
     border-right: 1px solid rgb(106, 106, 106);
     width: 25%;
     height: 100%;
-    padding: 1%;
+    padding: 5% 1%;
     display: flex;
     flex-direction: column;
 }
@@ -179,5 +179,32 @@ html {
 .signup-btn:hover{
     background-color: var(--purple) !important;
     color: white !important;
-    margin-bottom: 1%;
+}
+.file-cta 
+{
+    background-color: #333 !important;
+    color:white !important;
+    transition: background-color 0.5s;
+}
+
+.file-cta:hover
+{
+    background-color: #111 !important;
+}
+#file-name
+{
+    width:69%;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+    background-color: white;
+    color:black;
+    padding:3%;
+    overflow: hidden;
+    cursor: pointer;
+    font-size: small !important        ;
+    
+}
+.Employee-SignUp-Profile
+{
+    display: flex;
+    flex-direction: column;
 }

@@ -9,4 +9,5 @@ if (isset($_SESSION['emp_id'])) {
 } else {
     header('Location: ./login');
 }
+
 ?>  

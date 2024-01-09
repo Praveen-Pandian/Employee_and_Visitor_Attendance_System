@@ -12,6 +12,9 @@ $digit_3 = "";
 $digit_4 = "";
 $digit_5 = "";
 
+$password = "";
+$cpassword = "";
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $type = $_POST['type'];
@@ -40,9 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $GLOBALS['password'] = $_POST["password"];
         $GLOBALS['cpassword'] = $_POST["c_password"];
-        if ($GLOBALS['password'] == $GLOBALS['cpassword']) {
+        if (trim($GLOBALS["password"]) == "") {
+            $error_msg = "Enter the password";
+            $page = "change_password";
+        } else if (trim($GLOBALS['cpassword'] == "")) {
+            $error_msg = "Enter the confirm password";
+            $page = "change_password";
+        } else if ($GLOBALS['password'] == $GLOBALS['cpassword']) {
             changePassword($GLOBALS['password']);
-            header("Location: ../");
+            header("Location: ../");        
         } else {
             $error_msg = "Password does not match";
             $page = "change_password";
@@ -57,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang='en'>
 
 <head>
+    <link rel='icon' href='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLtc8BZ6ODkts0V0DHZ22rpI9pbM6Erydq3_bk7DWnsA&s' />
     <meta charset='UTF-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
@@ -119,19 +129,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class='form'>
             <form name='change_password_form' action='./' method='POST'>";
         if ($error_msg != "")
-            echo "      <div class='alert alert-danger' id='msg'>$error_msg</div>";
+            echo "<div class='alert alert-danger' id='msg'>$error_msg</div>";
         echo "      <h2>Change Password</h2>
                 <div class='input-group password'>
                     <span class='material-symbols-outlined input-group-text'>
                         lock
                     </span>
-                    <input class='form-control' type='password' name='password' placeholder='Password' value=>
+                    <input class='form-control' type='password' name='password' placeholder='Password' value=$password>
                 </div>
                 <div class='input-group password'>
                     <span class='material-symbols-outlined input-group-text'>
                         lock
                     </span>
-                    <input class='form-control' type='text' name='c_password' placeholder='Confirm Password'>
+                    <input class='form-control' type='text' name='c_password' placeholder='Confirm Password' value=$cpassword>
                 </div>
                 <input name='type' value='change_password' hidden/>
                 <button class='btn'>CHANGE PASSWORD</button>

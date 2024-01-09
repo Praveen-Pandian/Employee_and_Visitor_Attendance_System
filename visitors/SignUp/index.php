@@ -1,4 +1,6 @@
-<?php $connection = mysqli_connect('localhost', 'root', '', 'quadsel'); ?>
+<?php $connection = mysqli_connect('localhost', 'root', '', 'quadsel');
+
+?>
 <?php
 //Varibales
 $name = '';
@@ -118,12 +120,13 @@ if (isset($_POST['submit'])) {
         $result = mysqli_query($connection, $sql);
         if ($result !== false) {
             echo "<div class='notification is-success SignUp-Success'>Succesfully created </div>";
-        echo "<script>setTimeout(()=>{window.location.href='../../login'},2000)</script>";
+            echo "<script>sessionStorage.removeItem('file-name'); sessionStorage.removeItem('modal-profile')</script>";
+             echo "<script>setTimeout(()=>{window.location.href='../../login'},2000)</script>";
 
 
         } else {
             echo "<div class='notification is-danger SignUp-Success'>The Email Address you provided already exist </div>";
-        }
+        } 
     }
 }
 ?>
@@ -132,6 +135,7 @@ if (isset($_POST['submit'])) {
 <html lang="en">
 
 <head>
+    <link rel='icon' href='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLtc8BZ6ODkts0V0DHZ22rpI9pbM6Erydq3_bk7DWnsA&s' />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
@@ -249,38 +253,53 @@ if (isset($_POST['submit'])) {
                         </span>
                     </div>
 
-                    <div class="Employee-SignUp-Profile file is-normal has-name ">
-                        <label class="file-label">
+                    <div class="Employee-SignUp-Profile file has-name">
+                        <div class="file has-name is-boxed is-small">
+                            <label class="file-label">
                             <input accept="image/jpg,png,jpeg" class="file-input " type="file"
-                                onchange="imageUploaded()" name="profile_photo_link" autocomplete='off'>
-                            <span class="file-cta button is-dark ">
-                                <span class="file-icon">
-                                    <span class="material-symbols-outlined">
-                                        upload
+                                onchange="imageUploaded()" name="profile_photo_link" autocomplete='off'>                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <span class="material-symbols-outlined">
+                                         upload
+                                        </span>                                   
+                                     </span>
+                                    <span class="file-label">
+                                      Upload your Image
                                     </span>
                                 </span>
-                                <span class="file-label ">
-                                    Upload your Image
-                                </span>
-                            </span>
-                        </label>
+                            </label>
+                        </div>
+                        <span class="js-modal-trigger" data-target="modal-js-example" name='name_of_file' id='file-name' target='_blank'>
+
+                        </span>
                         <span id='profile_photo_link_Err'>
                             <?php echo $profile_photo_link_Err ?>
                         </span>
-                    </div>
 
                 </div>
-                <div class="Employee-SignUp-Submitbtn">
-                    <input type="submit" name='submit' class='button signup-btn' value='SignUp'>
-                    <p>Already have an account? <a href="../../index.php">Login</a></p>
-                </div>
+               
         </div>
+        <div class="Employee-SignUp-Submitbtn">
+                    <input type="submit" name='submit' class='button signup-btn' value='SignUp'>
+                    <p>Already have an account? <a onclick={SignUpToLogin()}>Login</a></p>
+                </div>
         <input type="hidden" name="profile_photo_link" id='profile_photo_link'
             value='<?php echo $profile_photo_link ?>'>
     </div>
     </form>
     </div>
     </div>
+    <div id="modal-js-example" class="modal" $modal-content-width='200px'>
+        <div class="modal-background"></div>
+
+    <div class="modal-content">
+        <div class="box">
+            <img src="" alt="Uploaded Image" id='modal-profile'>
+        </div>
+    </div>
+
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
 
 </body>
 <script>
@@ -293,11 +312,72 @@ if (isset($_POST['submit'])) {
         reader.onload = function () {
             base64String = reader.result;
             names.value = base64String;
-            document.getElementById("profile_image").src = base64String;
-            console.log(base64String);
+            // document.getElementById("file-name").innerText = file.name;
+            // document.getElementById("modal-profile").src = base64String;
+            sessionStorage.setItem('file-name',file.name)
+            sessionStorage.setItem('modal-profile',base64String)
+            InnerText()
+
         }
         reader.readAsDataURL(file);
     }
+    document.addEventListener('DOMContentLoaded', () => {
+  // Functions to open and close a modal
+  function openModal($el) {
+    $el.classList.add('is-active');
+  }
+
+  function closeModal($el) {
+    $el.classList.remove('is-active');
+  }
+
+  function closeAllModals() {
+    (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+      closeModal($modal);
+    });
+  }
+
+  // Add a click event on buttons to open a specific modal
+  (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+    const modal = $trigger.dataset.target;
+    const $target = document.getElementById(modal);
+
+    $trigger.addEventListener('click', () => {
+      openModal($target);
+    });
+  });
+
+  // Add a click event on various child elements to close the parent modal
+  (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+    const $target = $close.closest('.modal');
+
+    $close.addEventListener('click', () => {
+      closeModal($target);
+    });
+  });
+
+  // Add a keyboard event to close all modals
+  document.addEventListener('keydown', (event) => {
+    if (event.code === 'Escape') {
+      closeAllModals();
+    }
+  });
+});
+
+const InnerText=()=>
+{
+    document.getElementById("file-name").innerText = sessionStorage.getItem('file-name');
+    document.getElementById("modal-profile").src = sessionStorage.getItem('modal-profile');
+}
+InnerText();
+
+const SignUpToLogin=()=>
+{
+    sessionStorage.removeItem('file-name'); 
+    sessionStorage.removeItem('modal-profile')
+    window.location.href='../../index.php'
+}
+
 </script>
 
 </html>
