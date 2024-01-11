@@ -26,7 +26,7 @@ function view_employee_attendance($search_emp_id)
     $stmt->bind_param("ss", $search_emp_id, $month);
     $stmt->execute();
     $stmt->store_result();
-    $stmt->bind_result($emp_id, $date, $check_in_time, $check_out_time);
+    $stmt->bind_result($date, $check_in_time, $check_out_time,$emp_id);
     $rowCount = 0;
     if ($stmt->num_rows > 0) {
         echo "<div class='container mt-6'>

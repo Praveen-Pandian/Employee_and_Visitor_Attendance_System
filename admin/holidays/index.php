@@ -34,7 +34,7 @@
                 foreach ($rows as $row) {
                     // echo $row[0] . " " . $row[1];
                     $date = date("Y-m-d", strtotime(date($row[0])));
-                    $sql = "INSERT INTO company_holidays VALUES('$date','$row[1]')";
+                    $sql = "INSERT INTO company_holidays VALUES('$date','$row[1]') ON DUPLICATE KEY UPDATE reason = '$row[1]';";
                     $result = mysqli_query($con, $sql);
                 }
                 echo "<div class='container has-text-centered pt-6'>

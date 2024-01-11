@@ -85,12 +85,13 @@ $first_date = null;
 
 
 // Avg working hours
+$avg_working_time = 0;
 $sql = "SELECT SEC_TO_TIME(AVG(TIME_TO_SEC(`check_out_time`) - TIME_TO_SEC(`check_in_time`))) as stats FROM `employee_attendance` WHERE check_out_time != '00:00:00' GROUP BY emp_id HAVING emp_id = '$emp_id';";
 $result = mysqli_query($con, $sql);
-$row = mysqli_fetch_array($result);
-$avg_working_time = $row["stats"];
-$avg_working_time = (int)number_format(substr($avg_working_time, 0, 2)) + round(number_format(substr($avg_working_time, 3, 2)) / 60, 1);
-
+if ($row = mysqli_fetch_array($result)) {
+    $avg_working_time = $row["stats"];
+    $avg_working_time = (int)number_format(substr($avg_working_time, 0, 2)) + round(number_format(substr($avg_working_time, 3, 2)) / 60, 1);
+}
 
 // If date of joining is not this month then go to date of joining month
 if (strtotime(date("$year_of_joining-$month_of_joining-1")) > strtotime(date("$year-$month-1"))) {
@@ -112,7 +113,7 @@ $emp_name = $row["emp_name"];
 
 // Update Attendace till Yesterday
 $system_date = Date("Y-m-d");
-$sql = "UPDATE employee_attendance SET check_out_time = '18:00' WHERE date < '$system_date' and check_out_time = '00:00:00'";
+$sql = "DELETE FROM employee_attendance WHERE date < '$system_date' and check_out_time = '00:00:00'";
 mysqli_query($con, $sql);
 
 

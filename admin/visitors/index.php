@@ -57,6 +57,7 @@
         if (isset($_POST["visitors_btn"])) {
             $date = $_POST["selectedDate"];
         }
+
         $dateTime = DateTime::createFromFormat('Y-m-d', $date);
         $formattedDate = $dateTime->format('d F Y');
         echo "<div class='container has-text-centered pt-6'>
@@ -72,12 +73,8 @@
             </div>
         </div>
     </div>";
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if (isset($_POST["visitors_btn"])) {
-                include('./modules/visitors.php');
-                view_visitors_details($date);
-            }
-        }
+        include_once './modules/visitors.php';
+        view_visitors_details($date);
         ?>
 
     </form>

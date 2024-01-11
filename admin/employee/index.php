@@ -63,12 +63,10 @@ if (isset($_SESSION["emp_id"])) {
             </div>
         </div>
     </nav>
-    <form action="<?php echo htmlspecialchars(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_STRING)); ?>"
-        method="post">
+    <form action="<?php echo htmlspecialchars(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_STRING)); ?>" method="post">
         <div class="container mt-6">
             <div class="columns">
-                <div class="column is-one-fifths"><button class="button is-info has-icons" type="submit"
-                        name="pending_btn">
+                <div class="column is-one-fifths"><button class="button is-info has-icons" type="submit" name="pending_btn">
                         <span class="icon">
                             <i class="fa-regular fa-clock"></i>
                         </span>
@@ -79,17 +77,14 @@ if (isset($_SESSION["emp_id"])) {
                         <?php
                         $search_emp_id_value = filter_input(INPUT_POST, 'search_emp_id', FILTER_SANITIZE_EMAIL);
                         ?>
-                        <input class="input is-primary" type="text" name="search_emp_id"
-                            placeholder="EMP ID of employee"
-                            value="<?php echo isset($search_emp_id_value) ? htmlspecialchars($search_emp_id_value) : ''; ?>"></input>
+                        <input class="input is-primary" type="text" name="search_emp_id" placeholder="EMP ID of employee" value="<?php echo isset($search_emp_id_value) ? htmlspecialchars($search_emp_id_value) : ''; ?>"></input>
                         <span class="icon is-left">
                             <i class="fas fa-search"></i>
                         </span>
                     </div>
                 </div>
                 <div class="column is-one-fifths">
-                    <button class="button is-primary has-icons mr-5" type="submit" name="attendance_btn"
-                        id="attendance_btn">
+                    <button class="button is-primary has-icons mr-5" type="submit" name="attendance_btn" id="attendance_btn">
                         <span class="icon">
                             <i class="fa-regular fa-calendar-days"></i>
                         </span>
@@ -99,18 +94,29 @@ if (isset($_SESSION["emp_id"])) {
                             <i class="fa-regular fa-user"></i>
                         </span>
                     </button>
+                    <button class="button is-primary has-icons mr-5" type="submit" name="all_users">
+                        <span class="icon">
+                            <i class="fa-solid fa-users"></i>
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>
+
         <?php
+
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $pending_btn = filter_input(INPUT_POST, 'pending_btn', FILTER_SANITIZE_STRING);
             $approve_btn = filter_input(INPUT_POST, 'approve_btn', FILTER_SANITIZE_STRING);
             $reject_btn = filter_input(INPUT_POST, 'reject_btn', FILTER_SANITIZE_STRING);
             $edit_profile_btn = filter_input(INPUT_POST, 'edit_profile_btn', FILTER_SANITIZE_STRING);
             $delete_profile_btn = filter_input(INPUT_POST, 'delete_profile_btn', FILTER_SANITIZE_STRING);
+            $all_users = filter_input(INPUT_POST, 'all_users', FILTER_SANITIZE_STRING);
             $search_emp_id = filter_input(INPUT_POST, 'search_emp_id', FILTER_SANITIZE_EMAIL);
-            if (isset($pending_btn)) {
+            if (isset($all_users)) {
+                include_once('./modules/viewAll.php');
+                viewAllEmployees();
+            } else if (isset($pending_btn)) {
                 include('./modules/pending.php');
                 pending_approvals();
             } else if (isset($approve_btn)) {
@@ -170,6 +176,9 @@ if (isset($_SESSION["emp_id"])) {
                     }
                 }
             }
+        } else {
+            include_once('./modules/viewAll.php');
+            viewAllEmployees();
         }
         ?>
     </form>
@@ -199,6 +208,7 @@ if (isset($_SESSION["emp_id"])) {
                 const modal = document.getElementById(modalId);
                 openModal(modal);
             }
+
             function openModal($el) {
                 $el.classList.add("is-active");
             }
@@ -240,8 +250,6 @@ if (isset($_SESSION["emp_id"])) {
                 }
             });
         });
-
-
     </script>
 </body>
 

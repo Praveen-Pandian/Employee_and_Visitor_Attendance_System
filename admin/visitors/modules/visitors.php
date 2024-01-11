@@ -13,14 +13,14 @@ function view_visitors_details($date)
         $phone_number,
         $purpose_of_visit,
         $from_Address,
+        $Type,
         $today_Date,
         $Check_in,
         $Check_out,
         $Mode_of_transport,
         $Lap_make,
         $Adapt_make,
-        $Profile_photo_link,
-        $Type);
+        $Profile_photo_link);
     $rowCount = $stmt->num_rows;
     $dateTime = DateTime::createFromFormat('Y-m-d', $date);
     $formattedDate = $dateTime->format('d F Y');

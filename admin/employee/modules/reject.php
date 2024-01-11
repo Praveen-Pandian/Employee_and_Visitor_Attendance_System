@@ -17,6 +17,16 @@ function reject_employee()
     $stmtInsert->close();
     $stmtDelete->close();
     CloseCon($conn);
-
+    echo "<div class='notification is-danger SignUp-Success' style='width: 25%;
+    position: absolute !important;
+    bottom: 10%;
+    right: 1% !important;'>Employee Request rejected</div>";
+    echo "
+        <script>
+        setTimeout(()=>{
+        window.location.href='./';
+    },2000)
+    </script>
+    ";
 }
 ?>
